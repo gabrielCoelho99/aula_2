@@ -64,12 +64,12 @@ const metasRealizadas = async () => {
     })
 
     if (realizadas.length == 0){
-        console.log('Não existem metas realizadas =(')
+        console.log('Não existem metas realizadas ;(')
         return
     }
 
     await select({
-        message:"Metas Realizadas " + realizadas.length,
+        message:"Metas Realizadas: " + realizadas.length,
         choices:[...realizadas]
     })
 };
@@ -80,15 +80,41 @@ const metasAbertas = async ()=>{
     })
 
     if (abertas.length == 0) {
-        console.log("Não existem metas abertas! =)")
+        console.log("Não existem metas abertas! ;)")
         return
     }
 
     await select ({
-        message:"Metas Abertas " + abertas.length,
+        message:"Metas Abertas: " + abertas.length,
         choices: [...abertas]
     })
     
+};
+
+const deletarMetas = async () => {
+    const metasDesmarcadas = metas.map((meta) => {
+        return { value: meta.value, checked: false }
+    })
+
+    const itemsADeletar = await checkbox({
+        message:"Selecione a meta que quer deletar!",
+        choices:[...metasDesmarcadas],
+        instructions: false
+    })
+
+    if (itemsADeletar.length == 0) {
+        console.log("Nenhum item para deletar!")
+        return
+    }
+
+    itemsADeletar.forEach((item) => {
+        metas = metas.filter((meta) => {
+            return meta.value != item
+        })
+    })
+
+    console.log("Meta(s) deletada(s) com sucesso!")
+
 };
 
 const start = async () => {
@@ -113,6 +139,10 @@ const start = async () => {
                     value:"abertas"
                 },
                 {
+                    name:"Deletar Metas",
+                    value:"deletar"
+                },
+                {
                     name:"sair",
                     value:"sair"
                 }
@@ -133,6 +163,9 @@ const start = async () => {
                 break
             case "abertas":
                 await metasAbertas()
+                break
+            case "deletar":
+                await deletarMetas()
                 break
             case "sair":
                 console.log("Até a próxima meu chapa!")
